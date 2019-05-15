@@ -67,6 +67,7 @@ int main(int argc, char* argv[]) {
         std::cout << "Checking PE Executable Signature" << std::endl;
         if (!(buffer[0x00] == 'M' && buffer[0x01] == 'Z')) {
             std::cout << "The PE Executable Signature is Missing!" << std::endl;
+            return 2;
         }
         std::cout << "PE Executable Signature Found!!" << std::endl << std::endl;
 
