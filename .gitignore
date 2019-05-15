@@ -1,3 +1,5 @@
 .DS_Store
 .vscode/
 pe-parser
+.vs/
+Debug/
