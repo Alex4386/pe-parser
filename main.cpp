@@ -105,18 +105,25 @@ int main(int argc, char* argv[]) {
         std::cout << std::endl;
         std::cout << "NT Header Details:" << std::endl;
         int machineCode = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x04], buffer[peHeaderPointer+0x05], 0, 0);
-        printf("%30s: 0x%08x (%s)\n", "machineCode", machineCode, printMachineTypeByMachineCode(machineCode).c_str());
+        printf("%30s: 0x%04x (%s)\n", "machineCode", machineCode, printMachineTypeByMachineCode(machineCode).c_str());
 
         int sectionCount = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x06], buffer[peHeaderPointer+0x07], 0, 0);
         std::cout  << std::setw(32) << "Number of Sections: ";
         std::cout << sectionCount << std::endl;
 
-        int timeStamp = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x08], buffer[peHeaderPointer+0x09], buffer[peHeaderPointer+0x10], buffer[peHeaderPointer+0x11]);
+        // Warning: Potential Y2.038K
+        long timeStamp = mergeCharsToIntLittleEndian(
+            buffer[peHeaderPointer+0x08],
+            buffer[peHeaderPointer+0x09],
+            buffer[peHeaderPointer+0x10],
+            buffer[peHeaderPointer+0x11]
+        );
         std::cout << std::setw(32) << "created Time: ";
-        std::cout << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")" << std::endl;
+        std::cout << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")";
+        printf(" (0x%08lx)\n", timeStamp);
 
         int character = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x16], buffer[peHeaderPointer+0x17], 0, 0);
-        printf("%30s: 0x%08x\n\n", "Characteristics", character);
+        printf("%30s: 0x%04x\n\n", "Characteristics", character);
         std::cout << "Characteristics Details:" << std::endl;
         bool result[16] = {false, };
         for (int i = 0; i < 16; i++) {
@@ -256,7 +263,7 @@ void helpScreen(char* fileName) {
 }
 
 void printLine() {
-    std::cout << "=============================================" << std::endl;
+    std::cout << "===========================================================" << std::endl;
 }
 
 void printIntro() {
