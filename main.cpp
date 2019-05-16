@@ -207,6 +207,10 @@ int main(int argc, char* argv[]) {
         );
         printf("FileAlignment: 0x%08x\n", fileAlignment);
 
+        if (sectionAlignment % fileAlignment != 0) {
+            std::cout << "Warning! There is a probability of corrupted sectionAlignment Value or fileAlignment Value" << std::endl;
+        } 
+
         printf("OS Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0C],buffer[winSpecificCOFF+0x0D],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0E],buffer[winSpecificCOFF+0x0F],0,0));
         printf("Image Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x10],buffer[winSpecificCOFF+0x11],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x12],buffer[winSpecificCOFF+0x13],0,0));
         printf("SubSystem Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x14],buffer[winSpecificCOFF+0x15],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x16],buffer[winSpecificCOFF+0x17],0,0));
