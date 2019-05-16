@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include "extension.h"
 
+#define VERSION "v.0.0.1-pay1oad-alpha01"
+
 void helpScreen(char* fileName);
 
 void printLogo();
@@ -143,15 +145,16 @@ int main(int argc, char* argv[]) {
             std::cout << "Standard COFF Signature Not Found!" << std::endl;
             return 5;
         } 
-        if (!(buffer[standardCOFF+0x01] == '\x01')) {
+        if (buffer[standardCOFF+0x01] == '\x01') {
             if (buffer[standardCOFF+0x00] == '\x0b') {
                 std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER32" << std::endl;
                 COFFtype = 32;
             } else {
                 std::cout << "This Standard COFF Header is IMAGE_ROM_OPTIONAL_HEADER" << std::endl;
+                COFFtype = 0;
             }
             
-        } else if (!(buffer[standardCOFF+0x01] == '\x02')) {
+        } else if (buffer[standardCOFF+0x01] == '\x02') {
             std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER64" << std::endl;
             COFFtype = 64;
         } else {
@@ -291,6 +294,7 @@ void licenseFull() {
 }
 
 void printLogo() {
+    printLine();
     std::cout << "A pay1oad Project :                          " << std::endl;
     std::cout << " ____  _____   ____                          " << std::endl;
     std::cout << "|  _ \\| ____| |  _ \\ __ _ _ __ ___  ___ _ __ " << std::endl;
@@ -298,4 +302,5 @@ void printLogo() {
     std::cout << "|  __/| |___  |  __/ (_| | |  \\__ \\  __/ |   " << std::endl;
     std::cout << "|_|   |_____| |_|   \\__,_|_|  |___/\\___|_|   " << std::endl << std::endl;
     std::cout << std::setw(59) << "brought to you by Alex4386" << std::endl;
+    std::cout << std::setw(59) << VERSION << std::endl;
 }
