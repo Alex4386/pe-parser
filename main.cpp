@@ -285,11 +285,11 @@ void licenseFull() {
 }
 
 void printLogo() {
-    std::cout << " A pay1oad Project :                         " << std::endl;
+    std::cout << "A pay1oad Project :                          " << std::endl;
     std::cout << " ____  _____   ____                          " << std::endl;
     std::cout << "|  _ \\| ____| |  _ \\ __ _ _ __ ___  ___ _ __ " << std::endl;
     std::cout << "| |_) |  _|   | |_) / _` | '__/ __|/ _ \\ '__|" << std::endl;
     std::cout << "|  __/| |___  |  __/ (_| | |  \\__ \\  __/ |   " << std::endl;
-    std::cout << "|_|   |_____| |_|   \\__,_|_|  |___/\\___|_|   " << std::endl;
-    std::cout << "                   brought to you by Alex4386" << std::endl;
+    std::cout << "|_|   |_____| |_|   \\__,_|_|  |___/\\___|_|   " << std::endl << std::endl;
+    std::cout << std::setw(59) << "brought to you by Alex4386" << std::endl;
 }
