@@ -35,6 +35,7 @@ int main(int argc, char* argv[]) {
         }
         printIntro();
         licenseFull();
+        std::cout << std::endl;
         std::cout << "Reading File Info: " << fileName << std::endl;
         int fileSize = fileSizeResult.st_size;
         std::cout << "FileSize: " << fileSize;
