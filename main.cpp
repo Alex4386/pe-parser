@@ -160,7 +160,7 @@ int main(int argc, char* argv[]) {
         }
         std::cout << "Standard COFF Signature Found!" << std::endl;
         std::cout << std::endl;
-        std::cout << "Linker Version: " << (int)buffer[standardCOFF+0x02] << "." << (int)buffer[standardCOFF+0x03] << std::endl;
+        printf("Linker Version: %d.%d\n", buffer[standardCOFF+0x02], buffer[standardCOFF+0x03]);
 
         int sizeOfCode = mergeCharsToIntLittleEndian(
             buffer[standardCOFF+0x04],
@@ -207,9 +207,9 @@ int main(int argc, char* argv[]) {
         );
         printf("FileAlignment: 0x%08x\n", fileAlignment);
 
-        std::cout << "OS Version: " << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x0C],buffer[standardCOFF+0x0D],0,0) << "." << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x0E],buffer[standardCOFF+0x0F],0,0) << std::endl;
-        std::cout << "Image Version: " << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x10],buffer[standardCOFF+0x11],0,0) << "." << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x12],buffer[standardCOFF+0x13],0,0) << std::endl;
-        std::cout << "SubSystem Version: " << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x14],buffer[standardCOFF+0x15],0,0) << "." << mergeCharsToIntLittleEndian(buffer[standardCOFF+0x16],buffer[standardCOFF+0x17],0,0) << std::endl;
+        printf("OS Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0C],buffer[winSpecificCOFF+0x0D],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0E],buffer[winSpecificCOFF+0x0F],0,0));
+        printf("Image Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x10],buffer[winSpecificCOFF+0x11],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x12],buffer[winSpecificCOFF+0x13],0,0));
+        printf("SubSystem Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x14],buffer[winSpecificCOFF+0x15],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x16],buffer[winSpecificCOFF+0x17],0,0));
 
         int sizeOfImage = mergeCharsToIntLittleEndian(
             buffer[winSpecificCOFF+0x1C],
