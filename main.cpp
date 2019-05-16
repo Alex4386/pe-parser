@@ -116,8 +116,8 @@ int main(int argc, char* argv[]) {
         long timeStamp = mergeCharsToIntLittleEndian(
             buffer[peHeaderPointer+0x08],
             buffer[peHeaderPointer+0x09],
-            buffer[peHeaderPointer+0x10],
-            buffer[peHeaderPointer+0x11]
+            buffer[peHeaderPointer+0x0A],
+            buffer[peHeaderPointer+0x0B]
         );
         std::cout << std::setw(32) << "created Time: ";
         std::cout << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")";
