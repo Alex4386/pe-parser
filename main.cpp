@@ -13,6 +13,7 @@
 
 void helpScreen(char* fileName);
 
+void printLogo();
 void printIntro();
 void printLine();
 void licenseShort();
@@ -267,7 +268,7 @@ void printLine() {
 }
 
 void printIntro() {
-    std::cout << "PE Parser by Alex4386" << std::endl;
+    printLogo();
     printLine();
 }
 
@@ -281,4 +282,14 @@ void licenseFull() {
     std::cout << "Copyright (c) Alex4386" << std::endl;
     std::cout << "https://github.com/Alex4386/Pay1oad-PE-Parser" << std::endl;
     printLine();
+}
+
+void printLogo() {
+    std::cout << " A pay1oad Project :                         " << std::endl;
+    std::cout << " ____  _____   ____                          " << std::endl;
+    std::cout << "|  _ \\| ____| |  _ \\ __ _ _ __ ___  ___ _ __ " << std::endl;
+    std::cout << "| |_) |  _|   | |_) / _` | '__/ __|/ _ \\ '__|" << std::endl;
+    std::cout << "|  __/| |___  |  __/ (_| | |  \\__ \\  __/ |   " << std::endl;
+    std::cout << "|_|   |_____| |_|   \\__,_|_|  |___/\\___|_|   " << std::endl;
+    std::cout << "                   brought to you by Alex4386" << std::endl;
 }
