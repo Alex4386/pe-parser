@@ -1,3 +1,8 @@
+// Pay1oad PE Parser
+// Copyright (c) Alex4386
+//
+// Source Code is distributed under MIT License and HRPL.
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -116,12 +121,18 @@ int main(int argc, char* argv[]) {
         int COFFtype = 32;
 
         std::cout << "Finding Standard COFF Signature" << std::endl;
-        if (!(buffer[standardCOFF+0x00] == '\x0b')) {
+        if (!(buffer[standardCOFF+0x00] == '\x0b' || buffer[standardCOFF+0x00] == '\x07')) {
             std::cout << "Standard COFF Signature Not Found!" << std::endl;
-        }
+            return 5;
+        } 
         if (!(buffer[standardCOFF+0x01] == '\x01')) {
-            std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER32" << std::endl;
-            COFFtype = 32;
+            if (buffer[standardCOFF+0x00] == '\x0b') {
+                std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER32" << std::endl;
+                COFFtype = 32;
+            } else {
+                std::cout << "This Standard COFF Header is IMAGE_ROM_OPTIONAL_HEADER" << std::endl;
+            }
+            
         } else if (!(buffer[standardCOFF+0x01] == '\x02')) {
             std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER64" << std::endl;
             COFFtype = 64;

@@ -1,3 +1,8 @@
+// Extensions for Pay1oad PE Parser
+// Copyright (c) Alex4386
+//
+// Source Code is distributed under MIT License and HRPL.
+
 #include <string>
 #include <time.h>
 
@@ -73,37 +78,37 @@ std::string printMachineTypeByMachineCode(int machineCode) {
 std::string getCharacteristic(int i) {
     switch(i) {
         case 0:
-            return "Reloc stripped";
+            return "Relocation info Stripped";
         case 1:
-            return "Executable";
+            return "Executable (All Ext. Ref. Resolved)";
         case 2:
-            return "Line Number Stripped";
+            return "COFF Line Number Stripped";
         case 3:
-            return "Local Symbols Stripped";
+            return "COFF Local Symbols Table Stripped";
         case 4: 
-            return "WhiteSpaces are aggresively trimmed";
+            return "Aggresively trimmed Working Set (obsolete)";
         case 5:
-            return "Large Addresses Awareness";
+            return "Large Addresses (2GB) Handleable";
         case 6:
             return "16-bit Machine";
         case 7:
-            return "Reversed Bytes to LOW";
+            return "Reversed Bytes to LOW (obsolete)";
         case 8:
             return "32-bit Machine";
         case 9:
-            return "Is Debug Data Stripped";
+            return "Debug Data Stripped";
         case 10:
-            return "Removable from SwapRun";
+            return "SwapRun when launched on Removable Media";
         case 11:
-            return "Net runnable from swaprun";
+            return "SwapRun when launched via Network";
         case 12:
             return "System File";
         case 13:
             return "DLL File";
         case 14:
-            return "System ONLY";
+            return "UniProcessor System Only";
         case 15:
-            return "Reversed Bytes to HIGH";
+            return "Reversed Bytes to HIGH (obsolete)";
         default:
             return "error";
     }
@@ -115,4 +120,37 @@ std::string timeStampToHumanReadble(const time_t rawtime) {
     dt = localtime(&rawtime);
     strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", dt);
     return std::string(buffer);
+}
+
+std::string getSubSystemString(int subsystem) {
+    switch (subsystem) {
+    case 1:
+        return "native";
+    case 2:
+        return "Windows GUI";
+    case 3:
+        return "Windows CommandLine";
+    case 5:
+        return "OS/2 CommandLine";
+    case 7:
+        return "POSIX CommandLine";
+    case 9:
+        return "Windows CE GUI";
+    case 10:
+        return "EFI Application";
+    case 11:
+        return "EFI Boot Service Driver";
+    case 12:
+        return "EFI Runtime Driver";
+    case 13:
+        return "EFI ROM Image";
+    case 14:
+        return "XBOX";
+    case 16:
+        return "Windows Boot Application";
+    case 0:
+    default:
+        return "unknown";
+        break;
+    }
 }
