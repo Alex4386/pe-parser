@@ -86,7 +86,7 @@ int main(int argc, char* argv[]) {
         printf("0x%08x\n\n", peHeaderPointer);
 
         if (peHeaderPointer > fileSize) {
-            std::cout << "The NT Header is Locating outside of file." << std::endl;
+            std::cout << "The NT Header Pointer is pointing outside of file." << std::endl;
             return 3;
         }
 
