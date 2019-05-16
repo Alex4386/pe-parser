@@ -286,8 +286,7 @@ void licenseShort() {
 }
 
 void licenseFull() {
-    std::cout << "Distributed under MIT License" << std::endl;
-    std::cout << "and Hakurei Reimu Public License" << std::endl << std::endl;
+    std::cout << "Distributed under Hakurei Reimu Public License" << std::endl << std::endl;
     std::cout << "Copyright (c) Alex4386" << std::endl;
     std::cout << "https://github.com/Alex4386/Pay1oad-PE-Parser" << std::endl;
     printLine();
