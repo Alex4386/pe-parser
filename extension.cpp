@@ -154,3 +154,26 @@ std::string getSubSystemString(int subsystem) {
         break;
     }
 }
+
+std::string getDllCharacteristic(int i) {
+    switch (i) {
+        case 6:
+            return "Relocatable in loadtime";
+        case 7:
+            return "Force integrity check";
+        case 8:
+            return "Data Execution Prevention Support";
+        case 9:
+            return "Dll should not be Isolated";
+        case 10:
+            return "Doesn't use Structured Exception Handling";
+        case 11:
+            return "Dll should not be binded";
+        case 13:
+            return "Is WDM Driver";
+        case 15:
+            return "Dll is Terminal Server Aware";
+        default:
+            return "Reserved";
+    }
+}

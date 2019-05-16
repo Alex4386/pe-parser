@@ -4,6 +4,7 @@
 // Source Code is distributed under MIT License and HRPL.
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <string>
 #include <stdio.h>
@@ -68,6 +69,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         std::cout << "OK!" << std::endl << std::endl;
+        printLine();
+        std::cout << std::endl;
 
         std::cout << "Checking PE Executable Signature" << std::endl;
         if (!(buffer[0x00] == 'M' && buffer[0x01] == 'Z')) {
@@ -97,25 +100,31 @@ int main(int argc, char* argv[]) {
             }
         std::cout << "The NT Header Signature Found!!!" << std::endl << std::endl;
 
+        printLine();
+        std::cout << std::endl;
         std::cout << "NT Header Details:" << std::endl;
         int machineCode = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x04], buffer[peHeaderPointer+0x05], 0, 0);
-        printf("machineCode: 0x%08x (%s)\n", machineCode, printMachineTypeByMachineCode(machineCode).c_str());
+        printf("%30s: 0x%08x (%s)\n", "machineCode", machineCode, printMachineTypeByMachineCode(machineCode).c_str());
 
         int sectionCount = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x06], buffer[peHeaderPointer+0x07], 0, 0);
-        std::cout << "Number of Sections: " << sectionCount << std::endl;
+        std::cout  << std::setw(32) << "Number of Sections: ";
+        std::cout << sectionCount << std::endl;
 
         int timeStamp = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x08], buffer[peHeaderPointer+0x09], buffer[peHeaderPointer+0x10], buffer[peHeaderPointer+0x11]);
-        std::cout << "created Time: " << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")" << std::endl;
+        std::cout << std::setw(32) << "created Time: ";
+        std::cout << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")" << std::endl;
 
         int character = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x16], buffer[peHeaderPointer+0x17], 0, 0);
-        printf("characteristic: 0x%08x\n\n", character);
-        std::cout << "Characteristic Details:" << std::endl;
+        printf("%30s: 0x%08x\n\n", "Characteristics", character);
+        std::cout << "Characteristics Details:" << std::endl;
         bool result[16] = {false, };
         for (int i = 0; i < 16; i++) {
             result[i] = (character / (1 << i)) % 2;
-            std::cout << getCharacteristic(i) << ": " << std::boolalpha << result[i] << std::endl;
+            std::cout << std::setw(50) << getCharacteristic(i);
+            std::cout << ": " << std::boolalpha << result[i] << std::endl;
         }
-
+        std::cout << std::endl;
+        printLine();
         std::cout << std::endl;
         int standardCOFF = peHeaderPointer+0x18;
         int COFFtype = 32;
@@ -201,6 +210,30 @@ int main(int argc, char* argv[]) {
         );
         printf("SizeOfImage: 0x%08x\n", sizeOfImage);
 
+        int subSystem = mergeCharsToIntLittleEndian(
+            buffer[winSpecificCOFF+0x28],
+            buffer[winSpecificCOFF+0x29],
+            0,0          
+        );
+        std::cout << "subSystem: " << getSubSystemString(subSystem) << " (" << subSystem << ")" << std::endl;
+
+        int dllCharacteristics = mergeCharsToIntLittleEndian(
+            buffer[winSpecificCOFF+0x2A],
+            buffer[winSpecificCOFF+0x2B],
+            0,0          
+        );
+
+
+        printf("DLL Characteristics: 0x%04x\n\n", dllCharacteristics);
+        std::cout << "DLL Characteristic Details:" << std::endl;
+        bool dllResult[16] = {false, };
+        for (int i = 0; i < 16; i++) {
+            dllResult[i] = (dllCharacteristics / (1 << i)) % 2;
+            if (getDllCharacteristic(i).compare("Reserved")) {
+                std::cout << std::setw(50) << getDllCharacteristic(i);
+                std::cout << ": " << std::boolalpha << dllResult[i] << std::endl;
+            }
+        }
         
     } else {
         std::cout << "Too much argument detected!" << std::endl;
