@@ -55,3 +55,5 @@ I decided to make it, since i got an assignment about it!
 and...
 
 * ZUN (Creator of the TouHou Project (*who literally hooked me into Reverse Engineering*))
+
+This Repository comes with **Fantasy Seal™ Technology**.
