@@ -35,7 +35,7 @@ and...
 ### What is this?
 This Repository is an assignment of Pay1oad(The InfoSec Club of Gachon Univ.) 's study: Digital Forensics.  
 
-### Why do you made it cross-platform
+### Why did you made it cross-platform
 PE File Structure is usually used in Windows Systems, So Lots of Reverse Engineering Programs for PE Files are built only for Windows. But I use macOS as main operating system. And I am too lazy to turn the Parallels on because of just that, So.....
 I decided to make it, since i got an assignment about it!
 
