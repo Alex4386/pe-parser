@@ -1,6 +1,7 @@
-// Extensions for Pay1oad PE Parser
-// Copyright (c) Alex4386
+// Pay1oad PE Parser
+// Extensions
 //
+// Copyright (c) Alex4386
 // Source Code is distributed under HRPL.
 
 #include <string>

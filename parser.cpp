@@ -1,3 +1,10 @@
+// Pay1oad PE Parser
+// Parser Core
+//
+// Copyright (c) Alex4386
+//
+// Source Code is distributed under HRPL.
+
 #include "parser.h"
 #include "extension.h"
 #include <string>

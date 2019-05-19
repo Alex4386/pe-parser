@@ -1,5 +1,5 @@
 // Pay1oad PE Parser
-// Terminal Class Header
+// Terminal Namespace
 //
 // Copyright (c) Alex4386
 //

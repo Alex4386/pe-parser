@@ -1,5 +1,5 @@
 // Pay1oad PE Parser
-// FileLoad Class Header 
+// Parser Header
 //
 // Copyright (c) Alex4386
 //
