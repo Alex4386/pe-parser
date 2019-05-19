@@ -37,7 +37,7 @@ namespace Terminal
         std::cout << "Usage:" << std::endl;
         std::cout << fileName << " fileName" << std::endl;
         std::cout << std::endl;
-        std::cout << "This PE Parser comes with Fantasy Seal™ Technology." << std::endl;
+        std::cout << "This PE Parser comes with Fantasy Seal(tm) Technology." << std::endl;
     }
 
     void printLine() {
