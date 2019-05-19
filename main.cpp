@@ -1,305 +1,93 @@
 // Pay1oad PE Parser
 // Copyright (c) Alex4386
 //
-// Source Code is distributed under MIT License and HRPL.
+// Source Code is distributed under HRPL.
 
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 #include <string>
 #include <stdio.h>
-#include <sys/stat.h>
 #include "extension.h"
+#include "parser.h"
+#include "terminal.h"
 
-#define VERSION "v.0.0.1-pay1oad-alpha01"
-
-void helpScreen(char* fileName);
-
-void printLogo();
-void printIntro();
-void printLine();
-void licenseShort();
-void licenseFull();
-
-int mergeCharsToIntLittleEndian(char a, char b, char c, char d);
+void analysisSession(PEParser parser);
 
 int main(int argc, char* argv[]) {
     if (argc == 1) {
-        helpScreen(argv[0]);
+        Terminal::helpScreen(argv[0]);
         return 0;
     } else if (argc == 2) {
-        char* fileName = argv[1];
-
-        // Read file Size
-        struct stat fileSizeResult;
-        if (stat(fileName, &fileSizeResult) != 0) {
-            std::cout << "ERROR: " << fileName << ", No Such File detected" << std::endl;
-            return 11;
-        }
-        printIntro();
-        licenseFull();
-        std::cout << std::endl;
-        std::cout << "Reading File Info: " << fileName << std::endl;
-        int fileSize = fileSizeResult.st_size;
-        std::cout << "FileSize: " << fileSize;
-        printf(" (0x%08x)", fileSize);
-        std::cout << std::endl << std::endl;
-
-        std::cout << "Attaching FileStream...." << std::endl;
-        std::fstream fileStream;
-        fileStream.open(fileName, std::ios::in | std::ios::binary);
-
-        std::cout << "Creating buffer...." << std::endl;
-        char* buffer = new char[fileSize];
-        if (!fileStream) {
-            std::cout << "FileStream ERROR!" << std::endl;
-            return 12;
-        }
-
-        std::cout << "FileStream Ready!" << std::endl;
-        if (!fileStream.read(buffer, fileSize)) {
-            std::cout << "FileRead ERROR!" << std::endl;
-            return 13;
-        }
-        std::cout << "FileRead Complete!" << std::endl;
-        fileStream.close();
-
-        std::cout << std::endl;
-        std::cout << "Checking FileSize..." << std::endl;
-
-        if (fileSize <= 0x3F) {
-            std::cout << "The program is too small." << std::endl;
-            std::cout << "This is unlikely to be a PE program." << std::endl;
+        Terminal::printIntroQuick();
+        PEParser parser(argv[1]);
+        int error = parser.parseFile();
+        if (error != 0) {
+            std::cout << "ERROR!!" << std::endl;
+            switch(error) {
+                case 1:
+                    std::cout << "Failed to Load File!!" << std::endl;
+                    break;
+                case 11:
+                    std::cout << "Filesize is too small to be valid PE File" << std::endl;
+                    break;
+                case 12:
+                    std::cout << "Invalid PE Signature!" << std::endl;
+                    break;
+                case 13:
+                    std::cout << "NT Header Pointer is pointing outside of file" << std::endl;
+                    break;
+                case 14:
+                    std::cout << "Invalid NT Header Signature!" << std::endl;
+                default:
+                    std::cout << "Unknown Error!" << std::endl;
+            }
+            Terminal::printLine();
             return 1;
         }
-        std::cout << "OK!" << std::endl << std::endl;
-        printLine();
-        std::cout << std::endl;
-
-        std::cout << "Checking PE Executable Signature" << std::endl;
-        if (!(buffer[0x00] == 'M' && buffer[0x01] == 'Z')) {
-            std::cout << "The PE Executable Signature is Missing!" << std::endl;
-            return 2;
-        }
-        std::cout << "PE Executable Signature Found!!" << std::endl << std::endl;
-
-        std::cout << "Finding NT Header Pointer" << std::endl;
-        int peHeaderPointer = mergeCharsToIntLittleEndian(buffer[0x3C], buffer[0x3D], buffer[0x3E], buffer[0x3F]);
-        std::cout << "NT Header Pointer: ";
-        printf("0x%08x\n\n", peHeaderPointer);
-
-        if (peHeaderPointer > fileSize) {
-            std::cout << "The NT Header Pointer is pointing outside of file." << std::endl;
-            return 3;
-        }
-
-        std::cout << "Finding NT Header Signature" << std::endl;
-        if (!(buffer[peHeaderPointer+0x00] == '\x50' &&
-              buffer[peHeaderPointer+0x01] == '\x45' &&
-              buffer[peHeaderPointer+0x02] == 0 &&
-              buffer[peHeaderPointer+0x03] == 0
-            )) {
-                std::cout << "The NT Header Signature is Missing!!!" << std::endl;
-                return 4;
-            }
-        std::cout << "The NT Header Signature Found!!!" << std::endl << std::endl;
-
-        printLine();
-        std::cout << std::endl;
-        std::cout << "NT Header Details:" << std::endl;
-        int machineCode = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x04], buffer[peHeaderPointer+0x05], 0, 0);
-        printf("%30s: 0x%04x (%s)\n", "machineCode", machineCode, printMachineTypeByMachineCode(machineCode).c_str());
-
-        int sectionCount = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x06], buffer[peHeaderPointer+0x07], 0, 0);
-        std::cout  << std::setw(32) << "Number of Sections: ";
-        std::cout << sectionCount << std::endl;
-
-        // Warning: Potential Y2.038K
-        long timeStamp = mergeCharsToIntLittleEndian(
-            buffer[peHeaderPointer+0x08],
-            buffer[peHeaderPointer+0x09],
-            buffer[peHeaderPointer+0x0A],
-            buffer[peHeaderPointer+0x0B]
-        );
-        std::cout << std::setw(32) << "created Time: ";
-        std::cout << timeStamp << " (" << timeStampToHumanReadble(timeStamp) << ")";
-        printf(" (0x%08lx)\n", timeStamp);
-
-        int character = mergeCharsToIntLittleEndian(buffer[peHeaderPointer+0x16], buffer[peHeaderPointer+0x17], 0, 0);
-        printf("%30s: 0x%04x\n\n", "Characteristics", character);
-        std::cout << "Characteristics Details:" << std::endl;
-        bool result[16] = {false, };
-        for (int i = 0; i < 16; i++) {
-            result[i] = (character / (1 << i)) % 2;
-            std::cout << std::setw(50) << getCharacteristic(i);
-            std::cout << ": " << std::boolalpha << result[i] << std::endl;
-        }
-        std::cout << std::endl;
-        printLine();
-        std::cout << std::endl;
-        int standardCOFF = peHeaderPointer+0x18;
-        int COFFtype = 32;
-
-        std::cout << "Finding Standard COFF Signature" << std::endl;
-        if (!(buffer[standardCOFF+0x00] == '\x0b' || buffer[standardCOFF+0x00] == '\x07')) {
-            std::cout << "Standard COFF Signature Not Found!" << std::endl;
-            return 5;
-        } 
-        if (buffer[standardCOFF+0x01] == '\x01') {
-            if (buffer[standardCOFF+0x00] == '\x0b') {
-                std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER32" << std::endl;
-                COFFtype = 32;
-            } else {
-                std::cout << "This Standard COFF Header is IMAGE_ROM_OPTIONAL_HEADER" << std::endl;
-                COFFtype = 0;
-            }
-            
-        } else if (buffer[standardCOFF+0x01] == '\x02') {
-            std::cout << "This Standard COFF Header is IMAGE_OPTIONAL_HEADER64" << std::endl;
-            COFFtype = 64;
-        } else {
-            std::cout << "Could not determine which type of Standard COFF Header is" << std::endl;
-            return 5;
-        }
-        std::cout << "Standard COFF Signature Found!" << std::endl;
-        std::cout << std::endl;
-        printf("Linker Version: %d.%d\n", buffer[standardCOFF+0x02], buffer[standardCOFF+0x03]);
-
-        int sizeOfCode = mergeCharsToIntLittleEndian(
-            buffer[standardCOFF+0x04],
-            buffer[standardCOFF+0x05],
-            buffer[standardCOFF+0x06],
-            buffer[standardCOFF+0x07]
-        );
-
-        std::cout << "Size Of Code: " << sizeOfCode;
-        printf(" (0x%08x)\n", sizeOfCode);
-
-
-        int entryPoint = mergeCharsToIntLittleEndian(
-            buffer[standardCOFF+0x10],
-            buffer[standardCOFF+0x11],
-            buffer[standardCOFF+0x12],
-            buffer[standardCOFF+0x13]
-        );
-        printf("entryPoint: 0x%08x\n", entryPoint);
-
-        int winSpecificCOFF = peHeaderPointer+0x34;
-
-        int imageBase = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x00],
-            buffer[winSpecificCOFF+0x01],
-            buffer[winSpecificCOFF+0x02],
-            buffer[winSpecificCOFF+0x03]
-        );
-        printf("ImageBase: 0x%08x\n", imageBase);
-
-        int sectionAlignment = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x04],
-            buffer[winSpecificCOFF+0x05],
-            buffer[winSpecificCOFF+0x06],
-            buffer[winSpecificCOFF+0x07]
-        );
-        printf("SectionAlignment: 0x%08x\n", sectionAlignment);
-
-        int fileAlignment = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x08],
-            buffer[winSpecificCOFF+0x09],
-            buffer[winSpecificCOFF+0x0A],
-            buffer[winSpecificCOFF+0x0B]
-        );
-        printf("FileAlignment: 0x%08x\n", fileAlignment);
-
-        if (sectionAlignment % fileAlignment != 0) {
-            std::cout << "Warning! There is a probability of corrupted sectionAlignment Value or fileAlignment Value" << std::endl;
-        } 
-
-        printf("OS Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0C],buffer[winSpecificCOFF+0x0D],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x0E],buffer[winSpecificCOFF+0x0F],0,0));
-        printf("Image Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x10],buffer[winSpecificCOFF+0x11],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x12],buffer[winSpecificCOFF+0x13],0,0));
-        printf("SubSystem Version: %d.%d\n", mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x14],buffer[winSpecificCOFF+0x15],0,0), mergeCharsToIntLittleEndian(buffer[winSpecificCOFF+0x16],buffer[winSpecificCOFF+0x17],0,0));
-
-        int sizeOfImage = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x1C],
-            buffer[winSpecificCOFF+0x1D],
-            buffer[winSpecificCOFF+0x1E],
-            buffer[winSpecificCOFF+0x1F]            
-        );
-        printf("SizeOfImage: 0x%08x\n", sizeOfImage);
-
-        int subSystem = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x28],
-            buffer[winSpecificCOFF+0x29],
-            0,0          
-        );
-        std::cout << "subSystem: " << getSubSystemString(subSystem) << " (" << subSystem << ")" << std::endl;
-
-        int dllCharacteristics = mergeCharsToIntLittleEndian(
-            buffer[winSpecificCOFF+0x2A],
-            buffer[winSpecificCOFF+0x2B],
-            0,0          
-        );
-
-
-        printf("DLL Characteristics: 0x%04x\n\n", dllCharacteristics);
-        std::cout << "DLL Characteristic Details:" << std::endl;
-        bool dllResult[16] = {false, };
-        for (int i = 0; i < 16; i++) {
-            dllResult[i] = (dllCharacteristics / (1 << i)) % 2;
-            if (getDllCharacteristic(i).compare("Reserved")) {
-                std::cout << std::setw(50) << getDllCharacteristic(i);
-                std::cout << ": " << std::boolalpha << dllResult[i] << std::endl;
-            }
-        }
+        analysisSession(parser);
         
     } else {
         std::cout << "Too much argument detected!" << std::endl;
     }
 }
 
-int mergeCharsToIntLittleEndian(char a, char b, char c, char d) {
-    return ((int) ((unsigned char)a) << 0) |
-           ((int) ((unsigned char)b) << 8) |
-           ((int) ((unsigned char)c) << 16)  |
-           ((int) ((unsigned char)d) << 24);
-}
-
-void helpScreen(char* fileName) {
-    printIntro();
-    licenseFull();
-    std::cout << "Usage:" << std::endl;
-    std::cout << fileName << " fileName" << std::endl;
-    std::cout << std::endl;
-    std::cout << "This PE Parser comes with Fantasy Seal™ Technology." << std::endl;
-}
-
-void printLine() {
-    std::cout << "===========================================================" << std::endl;
-}
-
-void printIntro() {
-    printLogo();
-    printLine();
-}
-
-void licenseShort() {
-    std::cout << "Distributed under MIT and HRPL" << std::endl << std::endl;
-}
-
-void licenseFull() {
-    std::cout << "Distributed under Hakurei Reimu Public License" << std::endl << std::endl;
-    std::cout << "Copyright (c) Alex4386" << std::endl;
-    std::cout << "https://github.com/Alex4386/Pay1oad-PE-Parser" << std::endl;
-    printLine();
-}
-
-void printLogo() {
-    printLine();
-    std::cout << "A pay1oad Project :                          " << std::endl;
-    std::cout << " ____  _____   ____                          " << std::endl;
-    std::cout << "|  _ \\| ____| |  _ \\ __ _ _ __ ___  ___ _ __ " << std::endl;
-    std::cout << "| |_) |  _|   | |_) / _` | '__/ __|/ _ \\ '__|" << std::endl;
-    std::cout << "|  __/| |___  |  __/ (_| | |  \\__ \\  __/ |   " << std::endl;
-    std::cout << "|_|   |_____| |_|   \\__,_|_|  |___/\\___|_|   " << std::endl << std::endl;
-    std::cout << std::setw(59) << "brought to you by Alex4386" << std::endl;
-    std::cout << std::setw(59) << VERSION << std::endl;
+void analysisSession(PEParser parser) {
+    std::cout << "Pre-Analysis:" << std::endl;
+    std::cout << "Requested File: " << parser.getFileName() << std::endl;
+    std::cout << "File Size: " << parser.getFileSize() << " bytes (0x";
+    std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getFileSize() << ")" << std::endl;
+    Terminal::printLine();
+    std::cout << "NT Header (COFF Header):" << std::endl;
+    std::cout << "NT Header Address: " << "0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getNTHeaderPointer() << std::endl;
+    std::cout << "Machine Code: " << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getMachineCode();
+    std::cout << " (" << parser.getMachineTypeFromMachineCode() << ")" << std::endl;
+    std::cout << "Number of Sections: " << parser.getSectionCount() << std::endl;
+    std::cout << "File Creation Time: " << parser.getHumanReadableTimeStamp() << std::endl;
+    std::cout << "File Characteristics: " << std::dec << parser.getFileCharacteristics();
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getFileCharacteristics() << ")" << std::endl;
+    std::cout << parser.getHumanReadableFileCharacteristics() << std::endl;
+    Terminal::printLine();
+    std::cout << "Standard COFF Header:" << std::endl;
+    std::cout << "COFF Header Type: " << parser.getStandardCOFFHeaderType() << std::endl;
+    std::cout << "Linker Version: " << std::dec << (int)parser.getLinkerMajorVersion() << "." << (int)parser.getLinkerMinorVersion() << std::endl; 
+    std::cout << "Size Of Code: " << std::dec << parser.getSizeOfCode() << " bytes (0x";
+    std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getSizeOfCode() << ")" << std::endl;
+    std::cout << "EntryPoint: 0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getEntryPoint() << std::endl;
+    Terminal::printLine();
+    std::cout << "Optional COFF Header (Windows Apps Only):" << std::endl;
+    std::cout << "Image Base: 0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getImageBase() << std::endl;
+    std::cout << "Section Alignment: 0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getSectionAlignment() << std::endl;
+    std::cout << "File Alignment: 0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getFileAlignment() << std::endl;
+    std::cout << "File Alignment and Section Alignment Validity: " << std::boolalpha << parser.checkSectionAlignmentAndFileAlignment() << std::endl;
+    std::cout << "OS Version: " << std::dec << (int)parser.getOSMajorVersion() << "." << (int)parser.getOSMinorVersion() << std::endl; 
+    std::cout << "Image Version: " << std::dec << (int)parser.getImageMajorVersion() << "." << (int)parser.getImageMinorVersion() << std::endl; 
+    std::cout << "SubSystem Version: " << std::dec << (int)parser.getSubSystemMajorVersion() << "." << (int)parser.getSubSystemMinorVersion() << std::endl; 
+    std::cout << "Size Of Image: " << std::dec << parser.getSizeOfImage() << " bytes (0x";
+    std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getSizeOfImage() << ")" << std::endl;
+    std::cout << "Subsystem: " << std::dec << parser.getSubSystem() << " (" << parser.getHumanReadableSubSystem() << ")" << std::endl;
+    std::cout << "DLL Characteristics: " << std::dec << parser.getDLLCharacteristics();
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getDLLCharacteristics() << ")" << std::endl;
+    std::cout << parser.getHumanReadableDLLCharacteristics();
+    Terminal::printLine();
+    std::cout << "Parsing Complete." << std::endl;
 }
