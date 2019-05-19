@@ -1,6 +1,6 @@
 # pay1oad-PE-parser
 2019년 1학기 pay1oad PE Header Parser :: Assignment for Digital Forensics  
-![wa 4](https://user-images.githubusercontent.com/27724108/57826097-b97d0700-77dc-11e9-96a7-327604ace3a4.gif)  
+![image](https://user-images.githubusercontent.com/27724108/57988654-c5621500-7acb-11e9-9e01-f40f9e3cd15e.png)  
 
 ## Table of Contents
 * [한국어](#한국어)
