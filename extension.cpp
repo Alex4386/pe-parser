@@ -1,12 +1,35 @@
 // Extensions for Pay1oad PE Parser
 // Copyright (c) Alex4386
 //
-// Source Code is distributed under MIT License and HRPL.
+// Source Code is distributed under HRPL.
 
 #include <string>
 #include <time.h>
 
-std::string printMachineTypeByMachineCode(int machineCode) {
+int mergeCharsToIntLittleEndian(char a, char b, char c, char d) {
+    return ((int) ((unsigned char)a) << 0) |
+           ((int) ((unsigned char)b) << 8) |
+           ((int) ((unsigned char)c) << 16)  |
+           ((int) ((unsigned char)d) << 24);
+}
+
+unsigned int mergeCharArrayToIntLittleEndian(unsigned char* c) {
+    int result = 0;
+    for (int i = 0; i < 4; i++) {
+        result |= (unsigned char)c[i] << (i * 8);
+    }
+    return result;
+}
+
+unsigned short mergeCharArrayToShortLittleEndian(unsigned char* c) {
+    int result = 0;
+    for (int i = 0; i < 2; i++) {
+        result |= (unsigned char)c[i] << (i * 8);
+    }
+    return result;
+}
+
+std::string getMachineTypeByMachineCode(unsigned short machineCode) {
     switch(machineCode) {
         case 0:
             return "UNKNOWN";
@@ -155,7 +178,7 @@ std::string getSubSystemString(int subsystem) {
     }
 }
 
-std::string getDllCharacteristic(int i) {
+std::string getDLLCharacteristic(int i) {
     switch (i) {
         case 6:
             return "Relocatable in loadtime";
@@ -176,4 +199,17 @@ std::string getDllCharacteristic(int i) {
         default:
             return "Reserved";
     }
+}
+
+std::string getStandardCOFFHeaderName(unsigned char* c) {
+    if (c[1] == '\x01') {
+        if (c[0] == '\x0b') {
+            return "IMAGE_OPTIONAL_HEADER32";
+        } else if (c[0] == '\x07') {
+            return "IMAGE_ROM_OPTIONAL_HEADER";
+        }
+    } else if (c[1] == '\x02' && c[0] == '\x0b') {
+        return "IMAGE_OPTIONAL_HEADER64";
+    }
+    return "UNKNOWN";
 }
