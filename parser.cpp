@@ -41,6 +41,12 @@ int PEParser::parseFile() {
     imageBase = mergeCharArrayToIntLittleEndian(file->readBinary(4, winSpecificCOFF));
     sectionAlignment = mergeCharArrayToIntLittleEndian(file->readBinary(4, winSpecificCOFF+0x04));
     fileAlignment = mergeCharArrayToIntLittleEndian(file->readBinary(4, winSpecificCOFF+0x08));
+    osMajorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x0C));
+    osMinorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x0E));
+    imageMajorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x10));
+    imageMinorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x12));
+    subSystemMajorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x14));
+    subSystemMinorVersion = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x16));
     sizeOfImage = mergeCharArrayToIntLittleEndian(file->readBinary(4, winSpecificCOFF+0x1C));
     subSystem = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x28));
     dllCharacteristics = mergeCharArrayToShortLittleEndian(file->readBinary(2, winSpecificCOFF+0x2A));
