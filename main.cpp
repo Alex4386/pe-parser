@@ -17,34 +17,42 @@ int main(int argc, char* argv[]) {
     if (argc == 1) {
         Terminal::helpScreen(argv[0]);
         return 0;
-    } else if (argc == 2) {
+    } else if (argc >= 2) {
         Terminal::printIntroQuick();
-        PEParser parser(argv[1]);
-        int error = parser.parseFile();
-        if (error != 0) {
-            std::cout << "ERROR!!" << std::endl;
-            switch(error) {
-                case 1:
-                    std::cout << "Failed to Load File!!" << std::endl;
-                    break;
-                case 11:
-                    std::cout << "Filesize is too small to be valid PE File" << std::endl;
-                    break;
-                case 12:
-                    std::cout << "Invalid PE Signature!" << std::endl;
-                    break;
-                case 13:
-                    std::cout << "NT Header Pointer is pointing outside of file" << std::endl;
-                    break;
-                case 14:
-                    std::cout << "Invalid NT Header Signature!" << std::endl;
-                default:
-                    std::cout << "Unknown Error!" << std::endl;
+        for (int i = argc-1; i >= 1; i--) {
+            PEParser parser(argv[i]);
+            int error = parser.parseFile();
+            if (error != 0) {
+                std::cout << "ERROR!!" << std::endl;
+                switch(error) {
+                    case 1:
+                        std::cout << "Failed to Load File!!" << std::endl;
+                        break;
+                    case 11:
+                        std::cout << "Filesize is too small to be valid PE File" << std::endl;
+                        break;
+                    case 12:
+                        std::cout << "Invalid PE Signature!" << std::endl;
+                        break;
+                    case 13:
+                        std::cout << "NT Header Pointer is pointing outside of file" << std::endl;
+                        break;
+                    case 14:
+                        std::cout << "Invalid NT Header Signature!" << std::endl;
+                    default:
+                        std::cout << "Unknown Error!" << std::endl;
+                }
+                Terminal::printLine();
+                return 1;
             }
-            Terminal::printLine();
-            return 1;
+            analysisSession(parser);
+            if (i != 1) {
+                std::cout << std::endl << std::endl;
+                Terminal::printLine();
+                std::cout << "Analysing Next File: " << argv[i-1] << std::endl;
+                Terminal::printLine();
+            }
         }
-        analysisSession(parser);
         
     } else {
         std::cout << "Too much argument detected!" << std::endl;
