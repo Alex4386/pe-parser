@@ -12,6 +12,7 @@
 #include "terminal.h"
 
 void analysisSession(PEParser parser);
+int parseDos(char* fileName);
 
 int main(int argc, char* argv[]) {
     if (argc == 1) {
@@ -23,6 +24,8 @@ int main(int argc, char* argv[]) {
             PEParser parser(argv[i]);
             int error = parser.parseFile();
             if (error != 0) {
+                bool errorHandled = false;
+                int nestedError = -1;
                 std::cout << "ERROR!!" << std::endl;
                 switch(error) {
                     case 1:
@@ -36,16 +39,25 @@ int main(int argc, char* argv[]) {
                         break;
                     case 13:
                         std::cout << "NT Header Pointer is pointing outside of file" << std::endl;
+                        Terminal::printLine();
+                        std::cout << "Fallback to MZ Parser...." << std::endl;
+                        Terminal::printLine();
+                        nestedError = parseDos(argv[i]);
+                        if (nestedError == 0) { errorHandled = true; }
                         break;
                     case 14:
                         std::cout << "Invalid NT Header Signature!" << std::endl;
+                        break;
                     default:
                         std::cout << "Unknown Error!" << std::endl;
                 }
                 Terminal::printLine();
-                return 1;
+                if (!errorHandled) {
+                    return 1;
+                }
+            } else {
+                analysisSession(parser);
             }
-            analysisSession(parser);
             if (i != 1) {
                 std::cout << std::endl << std::endl;
                 Terminal::printLine();
@@ -98,4 +110,37 @@ void analysisSession(PEParser parser) {
     std::cout << parser.getHumanReadableDLLCharacteristics();
     Terminal::printLine();
     std::cout << "Parsing Complete." << std::endl;
+}
+
+int parseDos(char* fileName) {
+    MZParser parser(fileName);
+    int error = parser.parseFile();
+    if (error != 0) {
+        std::cout << "ERROR!!" << std::endl;
+        switch(error) {
+            case 1:
+                std::cout << "Failed to Load File!!" << std::endl;
+                break;
+            case 11:
+                std::cout << parser.getTotalSize() << " " << parser.getFileSize() << std::endl;
+                std::cout << "Filesize is too small to be valid MZ File" << std::endl;
+                break;
+            default:
+                std::cout << "Unknown Error!" << std::endl;
+        }
+        return error;
+    }
+
+    std::cout << "Pre-Analysis:" << std::endl;
+    std::cout << "Requested File: " << parser.getFileName() << std::endl;
+    std::cout << "File Size: " << parser.getFileSize() << " bytes (0x";
+    std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getFileSize() << ")" << std::endl;
+    Terminal::printLine();
+    std::cout << "MZ Header:" << std::endl;
+    std::cout << "Page Count: " << parser.getHowManyPages() << std::endl;
+    std::cout << "Last Page Size: " << parser.getLastPageBytes() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getLastPageBytes() << ")" << std::endl;
+    std::cout << "Total Executable Size: " << std::dec << parser.getTotalSize() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getTotalSize() << ")" << std::endl;
+
 }

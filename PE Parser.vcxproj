@@ -103,6 +103,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="terminal.cpp" />
+    <ClCompile Include="mzParser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extension.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="main.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="terminal.h" />
+    <ClInclude Include="mzParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

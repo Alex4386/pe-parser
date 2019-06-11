@@ -5,7 +5,7 @@
 //
 // Source Code is distributed under HRPL.
 
-#include "parser.h"
+#include "peParser.h"
 #include "extension.h"
 #include <string>
 #include <iomanip>
@@ -178,7 +178,7 @@ unsigned int PEParser::getFileAlignment() {
 }
 
 bool PEParser::checkSectionAlignmentAndFileAlignment() {
-    if (!parsed) { return 0; }
+    if (!file->isLoaded()) { return 0; }
     return (sectionAlignment % fileAlignment == 0);    
 }
 
