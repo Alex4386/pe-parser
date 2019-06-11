@@ -5,6 +5,7 @@
 //
 // Source Code is distributed under HRPL.
 
+#pragma once
 #include <fstream>
 
 class FileLoad {

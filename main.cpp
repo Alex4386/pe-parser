@@ -12,6 +12,7 @@
 #include "terminal.h"
 
 void analysisSession(PEParser parser);
+int parseDos(char* fileName);
 
 int main(int argc, char* argv[]) {
     if (argc == 1) {
@@ -19,10 +20,19 @@ int main(int argc, char* argv[]) {
         return 0;
     } else if (argc >= 2) {
         Terminal::printIntroQuick();
-        for (int i = argc-1; i >= 1; i--) {
+        for (int i = 1; i < argc; i++) {
+            if (argc > 2) {
+                std::cout << std::endl << std::endl;
+                Terminal::printLine();
+                std::cout << "Analysing File: " << argv[i] << std::endl;
+                Terminal::printLine();
+            }
+            
             PEParser parser(argv[i]);
             int error = parser.parseFile();
             if (error != 0) {
+                bool errorHandled = false;
+                int nestedError = -1;
                 std::cout << "ERROR!!" << std::endl;
                 switch(error) {
                     case 1:
@@ -36,21 +46,29 @@ int main(int argc, char* argv[]) {
                         break;
                     case 13:
                         std::cout << "NT Header Pointer is pointing outside of file" << std::endl;
+                        Terminal::printLine();
+                        std::cout << "Fallback to MZ Parser...." << std::endl;
+                        Terminal::printLine();
+                        nestedError = parseDos(argv[i]);
+                        if (nestedError == 0) { errorHandled = true; }
                         break;
                     case 14:
                         std::cout << "Invalid NT Header Signature!" << std::endl;
+                        break;
                     default:
                         std::cout << "Unknown Error!" << std::endl;
                 }
                 Terminal::printLine();
-                return 1;
+                if (!errorHandled) {
+                    return 1;
+                } else {
+                    std::cout << "Parsing Complete." << std::endl;
+                }
+            } else {
+                analysisSession(parser);
             }
-            analysisSession(parser);
             if (i != 1) {
-                std::cout << std::endl << std::endl;
-                Terminal::printLine();
-                std::cout << "Analysing Next File: " << argv[i-1] << std::endl;
-                Terminal::printLine();
+                
             }
         }
         
@@ -98,4 +116,75 @@ void analysisSession(PEParser parser) {
     std::cout << parser.getHumanReadableDLLCharacteristics();
     Terminal::printLine();
     std::cout << "Parsing Complete." << std::endl;
+}
+
+int parseDos(char* fileName) {
+    MZParser parser(fileName);
+    int error = parser.parseFile();
+    if (error != 0) {
+        std::cout << "ERROR!!" << std::endl;
+        switch(error) {
+            case 1:
+                std::cout << "Failed to Load File!!" << std::endl;
+                break;
+            case 11:
+                std::cout << parser.getTotalSize() << " " << parser.getFileSize() << std::endl;
+                std::cout << "Filesize is too small to be valid MZ File" << std::endl;
+                break;
+            default:
+                std::cout << "Unknown Error!" << std::endl;
+        }
+        return error;
+    }
+
+    std::cout << "Pre-Analysis:" << std::endl;
+    std::cout << "Requested File: " << parser.getFileName() << std::endl;
+    std::cout << "File Size: " << parser.getFileSize() << " bytes ";
+    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getFileSize() << ")" << std::endl;
+
+    Terminal::printLine();
+    std::cout << "MZ Header:" << std::endl;
+
+    std::cout << "Page Count: " << parser.getHowManyPages() << std::endl;
+    std::cout << "Last Page Size: " << parser.getLastPageBytes() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getLastPageBytes() << ")" << std::endl;
+    std::cout << "Total Executable Size: " << std::dec << parser.getTotalSize() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getTotalSize() << ")" << std::endl;
+    std::cout << "Relocation Count: " << std::dec << parser.getRelocations() << std::endl;
+    std::cout << "Header Size: " << parser.getHeaderSize() << std::endl;
+    std::cout << "EntryPoint: 0x" << std::hex << std::setfill('0') << std::setw(8) << parser.getEntryPoint() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "Memory Min: " << std::dec << parser.getMinMemory() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getMinMemory() << ")" << std::endl;
+    std::cout << "Memory Max: " << std::dec << parser.getMaxMemory() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getMaxMemory() << ")" << std::endl;
+
+    std::cout << "Stack Segment: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitStackSegment() << std::endl;
+    std::cout << "Stack Pointer: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitStackPointer() << std::endl;
+
+    std::cout << "Checksum: " << std::dec << parser.getChecksum() << std::endl;
+
+    std::cout << "Instruction Pointer: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitInstructionPointer() << std::endl;
+    std::cout << "Code Segment: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitCodeSegment() << std::endl;
+
+    std::cout << "Relocation Table Address: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getRelocationTableAddress() << std::endl;
+
+    std::cout << "Overlay Count: ";
+    std::cout << std::dec << parser.getHowManyOverlays() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "OEM ID: ";
+    std::cout << std::dec << parser.getOemId();
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemId() << ")" << std::endl;
+
+    std::cout << "OEM Info: ";
+    std::cout << std::dec << parser.getOemInfo();
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemInfo() << ")" << std::endl;
+    return 0;
 }

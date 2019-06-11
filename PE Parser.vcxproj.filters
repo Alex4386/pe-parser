@@ -24,7 +24,10 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="parser.cpp">
+    <ClCompile Include="peParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mzParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="terminal.cpp">
@@ -41,7 +44,10 @@
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="parser.h">
+    <ClInclude Include="peParser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mzParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="terminal.h">

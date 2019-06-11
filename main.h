@@ -5,4 +5,4 @@
 //
 // Source Code is distributed under HRPL.
 
-#define VERSION "v.0.1.0-beta01"
+#define VERSION "v.0.2.0"
