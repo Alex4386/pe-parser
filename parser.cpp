@@ -1,5 +1,5 @@
 // Pay1oad PE Parser
-// Parser Core
+// PE Parser Core
 //
 // Copyright (c) Alex4386
 //
@@ -96,42 +96,42 @@ std::string PEParser::getStandardCOFFHeaderType() {
 }
 
 unsigned int PEParser::getNTHeaderPointer() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return ntHeaderPointer;
 }
 
 unsigned short PEParser::getMachineCode() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return machineCode;
 }
 
 std::string PEParser::getMachineTypeFromMachineCode() {
-    if (!file->isLoaded()) { return ""; }
+    if (!parsed) { return ""; }
     return getMachineTypeByMachineCode(machineCode);
 }
 
 unsigned int PEParser::getSectionCount() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return sectionCount;
 }
 
 long PEParser::getTimeStamp() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return timeStamp;
 }
 
 std::string PEParser::getHumanReadableTimeStamp() {
-    if (!file->isLoaded()) { return ""; }
+    if (!parsed) { return ""; }
     return timeStampToHumanReadble(getTimeStamp());
 }
 
 unsigned short PEParser::getFileCharacteristics() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return fileCharacteristics;
 }
 
 std::string PEParser::getHumanReadableFileCharacteristics() {
-    if (!file->isLoaded()) { return ""; }
+    if (!parsed) { return ""; }
     std::ostringstream str;
     bool result[16] = {false, };
     for (unsigned short i = 0; i < 16; i++) {  
@@ -143,97 +143,97 @@ std::string PEParser::getHumanReadableFileCharacteristics() {
 }
 
 unsigned char PEParser::getLinkerMajorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return linkerMajorVersion;
 }
 
 unsigned char PEParser::getLinkerMinorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return linkerMinorVersion;
 }
 
 unsigned int PEParser::getSizeOfCode() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return sizeOfCode;
 }
 
 unsigned int PEParser::getEntryPoint() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return entryPoint;
 }
 
 unsigned int PEParser::getImageBase() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return imageBase;
 }
 
 unsigned int PEParser::getSectionAlignment() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return sectionAlignment;
 }
 
 unsigned int PEParser::getFileAlignment() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return fileAlignment;
 }
 
 bool PEParser::checkSectionAlignmentAndFileAlignment() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return (sectionAlignment % fileAlignment == 0);    
 }
 
 unsigned short PEParser::getOSMajorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return osMajorVersion;
 }
 
 unsigned short PEParser::getOSMinorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return osMinorVersion;
 }
 
 unsigned short PEParser::getImageMajorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return imageMajorVersion;
 }
 
 unsigned short PEParser::getImageMinorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return imageMinorVersion;
 }
 
 unsigned short PEParser::getSubSystemMajorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return subSystemMajorVersion;
 }
 
 unsigned short PEParser::getSubSystemMinorVersion() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return subSystemMinorVersion;
 }
 
 unsigned int PEParser::getSizeOfImage() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return sizeOfImage;
 }
 
 unsigned short PEParser::getSubSystem() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return subSystem;
 }
 
 std::string PEParser::getHumanReadableSubSystem() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return getSubSystemString(getSubSystem());
 }
 
 unsigned short PEParser::getDLLCharacteristics() {
-    if (!file->isLoaded()) { return 0; }
+    if (!parsed) { return 0; }
     return dllCharacteristics;
 }
 
 std::string PEParser::getHumanReadableDLLCharacteristics() {
-    if (!file->isLoaded()) { return ""; }
+    if (!parsed) { return ""; }
     std::ostringstream str;
     bool result[16] = {false, };
     for (unsigned short i = 0; i < 16; i++) {    
