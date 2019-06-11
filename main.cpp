@@ -20,7 +20,14 @@ int main(int argc, char* argv[]) {
         return 0;
     } else if (argc >= 2) {
         Terminal::printIntroQuick();
-        for (int i = argc-1; i >= 1; i--) {
+        for (int i = 1; i < argc; i++) {
+            if (argc > 2) {
+                std::cout << std::endl << std::endl;
+                Terminal::printLine();
+                std::cout << "Analysing File: " << argv[i] << std::endl;
+                Terminal::printLine();
+            }
+            
             PEParser parser(argv[i]);
             int error = parser.parseFile();
             if (error != 0) {
@@ -54,15 +61,14 @@ int main(int argc, char* argv[]) {
                 Terminal::printLine();
                 if (!errorHandled) {
                     return 1;
+                } else {
+                    std::cout << "Parsing Complete." << std::endl;
                 }
             } else {
                 analysisSession(parser);
             }
             if (i != 1) {
-                std::cout << std::endl << std::endl;
-                Terminal::printLine();
-                std::cout << "Analysing Next File: " << argv[i-1] << std::endl;
-                Terminal::printLine();
+                
             }
         }
         
@@ -133,7 +139,7 @@ int parseDos(char* fileName) {
 
     std::cout << "Pre-Analysis:" << std::endl;
     std::cout << "Requested File: " << parser.getFileName() << std::endl;
-    std::cout << "File Size: " << parser.getFileSize() << " bytes";
+    std::cout << "File Size: " << parser.getFileSize() << " bytes ";
     std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getFileSize() << ")" << std::endl;
 
     Terminal::printLine();
@@ -175,11 +181,10 @@ int parseDos(char* fileName) {
 
     std::cout << "OEM ID: ";
     std::cout << std::dec << parser.getOemId();
-    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemId() << ")" << std::endl;
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemId() << ")" << std::endl;
 
     std::cout << "OEM Info: ";
-    std::cout << std::dec << parser.getOemInfo() << std::endl;
-    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemInfo() << ")" << std::endl;
-
+    std::cout << std::dec << parser.getOemInfo();
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemInfo() << ")" << std::endl;
     return 0;
 }
