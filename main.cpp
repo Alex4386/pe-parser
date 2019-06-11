@@ -150,7 +150,7 @@ int parseDos(char* fileName) {
     std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getLastPageBytes() << ")" << std::endl;
     std::cout << "Total Executable Size: " << std::dec << parser.getTotalSize() << " bytes";
     std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getTotalSize() << ")" << std::endl;
-    std::cout << "Relocation Counts: " << std::dec << parser.getRelocations() << std::endl;
+    std::cout << "Relocation Count: " << std::dec << parser.getRelocations() << std::endl;
     std::cout << "Header Size: " << parser.getHeaderSize() << std::endl;
     std::cout << "EntryPoint: 0x" << std::hex << std::setfill('0') << std::setw(8) << parser.getEntryPoint() << std::endl;
     std::cout << std::endl;
