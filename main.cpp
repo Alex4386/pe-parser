@@ -133,14 +133,53 @@ int parseDos(char* fileName) {
 
     std::cout << "Pre-Analysis:" << std::endl;
     std::cout << "Requested File: " << parser.getFileName() << std::endl;
-    std::cout << "File Size: " << parser.getFileSize() << " bytes (0x";
-    std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getFileSize() << ")" << std::endl;
+    std::cout << "File Size: " << parser.getFileSize() << " bytes";
+    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getFileSize() << ")" << std::endl;
+
     Terminal::printLine();
     std::cout << "MZ Header:" << std::endl;
+
     std::cout << "Page Count: " << parser.getHowManyPages() << std::endl;
     std::cout << "Last Page Size: " << parser.getLastPageBytes() << " bytes";
-    std::cout << " (0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getLastPageBytes() << ")" << std::endl;
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getLastPageBytes() << ")" << std::endl;
     std::cout << "Total Executable Size: " << std::dec << parser.getTotalSize() << " bytes";
-    std::cout << " (0x" << std::setfill('0') << std::setw(8) << std::hex << parser.getTotalSize() << ")" << std::endl;
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getTotalSize() << ")" << std::endl;
+    std::cout << "Relocation Counts: " << std::dec << parser.getRelocations() << std::endl;
+    std::cout << "Header Size: " << parser.getHeaderSize() << std::endl;
+    std::cout << "EntryPoint: 0x" << std::hex << std::setfill('0') << std::setw(8) << parser.getEntryPoint() << std::endl;
+    std::cout << std::endl;
 
+    std::cout << "Memory Min: " << std::dec << parser.getMinMemory() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getMinMemory() << ")" << std::endl;
+    std::cout << "Memory Max: " << std::dec << parser.getMaxMemory() << " bytes";
+    std::cout << " (0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getMaxMemory() << ")" << std::endl;
+
+    std::cout << "Stack Segment: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitStackSegment() << std::endl;
+    std::cout << "Stack Pointer: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitStackPointer() << std::endl;
+
+    std::cout << "Checksum: " << std::dec << parser.getChecksum() << std::endl;
+
+    std::cout << "Instruction Pointer: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitInstructionPointer() << std::endl;
+    std::cout << "Code Segment: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getInitCodeSegment() << std::endl;
+
+    std::cout << "Relocation Table Address: ";
+    std::cout << "0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getRelocationTableAddress() << std::endl;
+
+    std::cout << "Overlay Count: ";
+    std::cout << std::dec << parser.getHowManyOverlays() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "OEM ID: ";
+    std::cout << std::dec << parser.getOemId();
+    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemId() << ")" << std::endl;
+
+    std::cout << "OEM Info: ";
+    std::cout << std::dec << parser.getOemInfo() << std::endl;
+    std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getOemInfo() << ")" << std::endl;
+
+    return 0;
 }
