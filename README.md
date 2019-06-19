@@ -1,6 +1,10 @@
 # pay1oad-PE-parser
-2019년 1학기 pay1oad PE Header Parser :: Assignment for Digital Forensics  
-![image](https://user-images.githubusercontent.com/27724108/57996292-76cf6d80-7b01-11e9-8e7d-26672e7c4290.png)
+@pay1oad-repo Project: PE/MZ Header Parser :: A crossplatform Windows PE/MS-DOS MZ Header Parser  
+PE Parsing in action:  
+![image](https://user-images.githubusercontent.com/27724108/57996292-76cf6d80-7b01-11e9-8e7d-26672e7c4290.png) . 
+MZ Parsing since version 0.2.0!:  
+![image](https://user-images.githubusercontent.com/27724108/59567233-f2432100-90a5-11e9-8654-2a42611709d6.png)
+
 
 ## Table of Contents
 * [한국어](#한국어)
