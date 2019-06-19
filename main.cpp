@@ -80,7 +80,7 @@ int main(int argc, char* argv[]) {
 void analysisSession(PEParser parser) {
     std::cout << "Pre-Analysis:" << std::endl;
     std::cout << "Requested File: " << parser.getFileName() << std::endl;
-    std::cout << "File Size: " << parser.getFileSize() << " bytes (0x";
+    std::cout << "File Size: " << std::dec << parser.getFileSize() << " bytes (0x";
     std::cout << std::setfill('0') << std::setw(8) << std::hex << parser.getFileSize() << ")" << std::endl;
     Terminal::printLine();
     std::cout << "NT Header (COFF Header):" << std::endl;
@@ -139,7 +139,7 @@ int parseDos(char* fileName) {
 
     std::cout << "Pre-Analysis:" << std::endl;
     std::cout << "Requested File: " << parser.getFileName() << std::endl;
-    std::cout << "File Size: " << parser.getFileSize() << " bytes ";
+    std::cout << "File Size: " << std::dec << parser.getFileSize() << " bytes ";
     std::cout << "(0x" << std::setfill('0') << std::setw(4) << std::hex << parser.getFileSize() << ")" << std::endl;
 
     Terminal::printLine();
