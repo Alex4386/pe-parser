@@ -1,7 +1,8 @@
-// Pay1oad PE Parser
+// PE Parser
 // Extensions Header
 //
-// Copyright (c) Alex4386
+// Copyright (c) Alex4386 and PE-Parser Contributors
+//
 // Source Code is distributed under HRPL.
 
 std::string getMachineTypeByMachineCode(unsigned short machineCode);

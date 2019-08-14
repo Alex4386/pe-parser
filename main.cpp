@@ -1,5 +1,5 @@
-// Pay1oad PE Parser
-// Copyright (c) Alex4386
+// PE Parser
+// Copyright (c) Alex4386 and PE-Parser Contributors
 //
 // Source Code is distributed under HRPL.
 

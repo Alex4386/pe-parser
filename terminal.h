@@ -1,7 +1,7 @@
-// Pay1oad PE Parser
+// PE Parser
 // Terminal Namespace
 //
-// Copyright (c) Alex4386
+// Copyright (c) Alex4386 and PE-Parser Contributors
 //
 // Source Code is distributed under HRPL.
 
