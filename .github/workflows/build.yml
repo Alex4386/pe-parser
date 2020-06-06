@@ -15,15 +15,13 @@ jobs:
 #      run: ./configure
     - name: make
       run: make
-    - name: check for directory
-      run: dir build/
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2
       with:
         # Artifact name
         name: pe-parser for Windows
         # A file, directory or wildcard pattern that describes what to upload
-        path: ./build/pe-parser
+        path: ./build/pe-parser.exe
   build-macos:
     runs-on: macos-latest
     steps:
