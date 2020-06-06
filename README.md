@@ -1,6 +1,7 @@
 # PE-parser
 ![image](https://user-images.githubusercontent.com/27724108/62987479-f78cd400-be7a-11e9-8ffa-9b19fe84b571.png)
 
+![pe-parser builder](https://github.com/Alex4386/pe-parser/workflows/pe-parser%20builder/badge.svg)
 
 ## Table of Contents
 * [한국어](#한국어)
